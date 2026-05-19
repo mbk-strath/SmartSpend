@@ -1,33 +1,49 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Wallet, Eye, EyeOff } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { authAPI } from '../services/api'
 
-export default function Login({ onLogin }) {
-  const [mode, setMode] = useState('login') // 'login' | 'register'
+const STATS = [
+  { value: '12k+', label: 'Students' },
+  { value: 'KES 4M', label: 'Tracked' },
+  { value: '98%', label: 'Stay on budget' },
+]
+
+const TAGLINES = {
+  login: {
+    heading: 'Spend with intention.\nSave without thinking.',
+    sub: 'A budgeting companion built for students — log it once, learn from it forever.',
+  },
+  register: {
+    heading: 'Start your money\njourney today.',
+    sub: 'Join thousands of students already building smarter spending habits.',
+  },
+}
+
+export default function Login({ onLogin, mode: initialMode = 'login' }) {
+  const [mode, setMode] = useState(initialMode)
   const [form, setForm] = useState({ email: '', username: '', password: '' })
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const tag = TAGLINES[mode]
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+  const handleSubmit = async () => {
+    setError(''); setLoading(true)
     try {
       if (mode === 'register') {
         await authAPI.register({ email: form.email, username: form.username, password: form.password })
         setMode('login')
-        setError('')
-        setForm((f) => ({ ...f, password: '' }))
+        setForm(f => ({ ...f, password: '' }))
+        setLoading(false)
         return
       }
       const res = await authAPI.login({ email: form.email, password: form.password })
       localStorage.setItem('token', res.data.access_token)
-      onLogin()
+      await onLogin()
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'Something went wrong.')
@@ -37,190 +53,180 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'var(--bg-base)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Background radial blobs */}
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Left — burgundy panel */}
       <div style={{
-        position: 'absolute', top: '15%', left: '20%',
-        width: 400, height: 400,
-        background: 'radial-gradient(circle, rgba(52, 211, 153, 0.06) 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute', bottom: '10%', right: '15%',
-        width: 300, height: 300,
-        background: 'radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
+        width: '50%', minHeight: '100vh',
+        background: 'linear-gradient(160deg, var(--burgundy-deep) 0%, var(--burgundy) 50%, #a0222f 100%)',
+        position: 'relative', overflow: 'hidden',
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        padding: '32px 48px',
+      }}>
+        {/* Noise texture */}
+        <div style={{
+          position: 'absolute', inset: 0, opacity: 0.04,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          pointerEvents: 'none',
+        }} />
 
-      <div
-        className="animate-fade-in-up"
-        style={{
-          width: '100%',
-          maxWidth: 420,
-          background: 'var(--bg-elevated)',
-          border: '1px solid var(--border)',
-          borderRadius: 24,
-          padding: '36px 32px',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
         {/* Logo */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
-            width: 52, height: 52, borderRadius: 16,
-            background: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
+            width: 30, height: 30, borderRadius: 8,
+            background: 'rgba(255,255,255,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 14,
-            boxShadow: '0 8px 24px rgba(52, 211, 153, 0.25)',
           }}>
-            <Wallet size={26} color="#080a0f" strokeWidth={2.5} />
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <path d="M2 10h20"/>
+            </svg>
           </div>
+          <span style={{ fontFamily: 'Instrument Serif, serif', fontSize: 18, color: '#fff' }}>
+            SmartSpend
+          </span>
+        </div>
+
+        {/* Heading */}
+        <div>
           <h1 style={{
-            margin: 0, fontFamily: 'Syne, sans-serif', fontWeight: 800,
-            fontSize: 26, letterSpacing: '-0.03em', color: 'var(--text-primary)',
+            fontFamily: 'Instrument Serif, serif', fontSize: 38, color: '#fff',
+            lineHeight: 1.15, marginBottom: 16, fontWeight: 400,
+            whiteSpace: 'pre-line',
           }}>
-            Smart<span style={{ color: 'var(--accent-green)' }}>Spend</span>
+            {tag.heading}
           </h1>
-          <p style={{ margin: '6px 0 0', color: 'var(--text-muted)', fontSize: 13 }}>
-            {mode === 'login' ? 'Welcome back. Sign in to continue.' : 'Create your account to get started.'}
+          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 14, lineHeight: 1.6, maxWidth: 320 }}>
+            {tag.sub}
           </p>
         </div>
 
-        {/* Mode tabs */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr',
-          background: 'var(--bg-card)', borderRadius: 12, padding: 4, marginBottom: 24, gap: 4,
-        }}>
-          {['login', 'register'].map((m) => (
-            <button
-              key={m}
-              onClick={() => { setMode(m); setError('') }}
-              style={{
-                padding: '8px 0', borderRadius: 9, border: 'none', cursor: 'pointer',
-                fontFamily: 'Syne, sans-serif', fontWeight: 600, fontSize: 13,
-                transition: 'all 0.2s',
-                background: mode === m ? 'var(--bg-elevated)' : 'transparent',
-                color: mode === m ? 'var(--text-primary)' : 'var(--text-muted)',
-                boxShadow: mode === m ? '0 1px 4px rgba(0,0,0,0.3)' : 'none',
-              }}
-            >
-              {m === 'login' ? 'Sign In' : 'Register'}
-            </button>
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: 12 }}>
+          {STATS.map(({ value, label }) => (
+            <div key={label} style={{
+              flex: 1, background: 'rgba(255,255,255,0.10)',
+              borderRadius: 12, padding: '14px 16px',
+              backdropFilter: 'blur(4px)',
+            }}>
+              <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 22, color: '#fff', lineHeight: 1 }}>
+                {value}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>{label}</div>
+            </div>
           ))}
         </div>
+      </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {/* Email */}
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6, fontWeight: 500 }}>
-              Email
-            </label>
-            <input
-              className="input-field"
-              type="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={(e) => set('email', e.target.value)}
-              autoComplete="email"
-            />
+      {/* Right — form panel */}
+      <div style={{
+        width: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: '#faf8f6', padding: '32px 48px',
+      }}>
+        <div style={{ width: '100%', maxWidth: 380 }} className="anim-up">
+          <div style={{ marginBottom: 32 }}>
+            <div style={{
+              fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+              textTransform: 'uppercase', color: 'var(--burgundy)', marginBottom: 8,
+            }}>
+              {mode === 'login' ? 'Welcome back' : 'Get started'}
+            </div>
+            <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 30, color: 'var(--text-primary)', fontWeight: 400 }}>
+              {mode === 'login' ? 'Sign in' : 'Create account'}
+            </h2>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>
+              {mode === 'login'
+                ? 'Enter your details to access your dashboard.'
+                : 'Fill in your details to set up your free account.'}
+            </p>
           </div>
 
-          {/* Username (register only) */}
-          {mode === 'register' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {/* Full name / username (register only) */}
+            {mode === 'register' && (
+              <div>
+                <label style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'block', marginBottom: 6, fontWeight: 500 }}>
+                  Full name
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}
+                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input className="input-field" placeholder="Jules Smith"
+                    value={form.username} onChange={e => set('username', e.target.value)}
+                    style={{ paddingLeft: 36 }} />
+                </div>
+              </div>
+            )}
+
+            {/* Email */}
             <div>
-              <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6, fontWeight: 500 }}>
-                Username
+              <label style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'block', marginBottom: 6, fontWeight: 500 }}>
+                Email
               </label>
-              <input
-                className="input-field"
-                placeholder="your_username"
-                value={form.username}
-                onChange={(e) => set('username', e.target.value)}
-                autoComplete="username"
-              />
+              <div style={{ position: 'relative' }}>
+                <Mail size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input className="input-field" type="email" placeholder="you@school.edu"
+                  value={form.email} onChange={e => set('email', e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                  style={{ paddingLeft: 36 }} />
+              </div>
             </div>
-          )}
 
-          {/* Password */}
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6, fontWeight: 500 }}>
-              Password
-            </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                className="input-field"
-                type={showPw ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={form.password}
-                onChange={(e) => set('password', e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
-                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                style={{ paddingRight: 44 }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw((v) => !v)}
-                style={{
+            {/* Password */}
+            <div>
+              <label style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'block', marginBottom: 6, fontWeight: 500 }}>
+                Password
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Lock size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input className="input-field" type={showPw ? 'text' : 'password'} placeholder="••••••••"
+                  value={form.password} onChange={e => set('password', e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                  style={{ paddingLeft: 36, paddingRight: 40 }} />
+                <button type="button" onClick={() => setShowPw(v => !v)} style={{
                   position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: 'var(--text-muted)', display: 'flex', alignItems: 'center',
-                }}
-              >
-                {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
-              </button>
+                  background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+                  display: 'flex', padding: 0,
+                }}>
+                  {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
+              </div>
             </div>
+
+            {error && (
+              <div style={{
+                padding: '10px 14px', borderRadius: 8,
+                background: 'var(--red-bg)', color: 'var(--red)', fontSize: 13,
+                border: '1px solid rgba(192,57,43,0.15)',
+              }}>{error}</div>
+            )}
+
+            <button className="btn-primary" onClick={handleSubmit} disabled={loading}
+              style={{ width: '100%', justifyContent: 'center', padding: '13px', marginTop: 4, borderRadius: 12, fontSize: 15 }}>
+              {loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
+              {!loading && <ArrowRight size={15} />}
+            </button>
+
+            <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>
+              {mode === 'login' ? (
+                <>New here?{' '}
+                  <button onClick={() => { setMode('register'); setError('') }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--burgundy)', fontWeight: 500, fontSize: 13 }}>
+                    Create an account
+                  </button>
+                </>
+              ) : (
+                <>Already have an account?{' '}
+                  <button onClick={() => { setMode('login'); setError('') }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--burgundy)', fontWeight: 500, fontSize: 13 }}>
+                    Sign in
+                  </button>
+                </>
+              )}
+            </p>
           </div>
-
-          {error && (
-            <div style={{
-              padding: '10px 14px', borderRadius: 10,
-              background: 'rgba(251, 113, 133, 0.08)',
-              border: '1px solid rgba(251, 113, 133, 0.2)',
-              color: 'var(--accent-red)', fontSize: 13,
-            }}>
-              {error}
-            </div>
-          )}
-
-          {mode === 'register' && !error && (
-            <div style={{
-              padding: '10px 14px', borderRadius: 10,
-              background: 'rgba(52, 211, 153, 0.06)',
-              border: '1px solid rgba(52, 211, 153, 0.15)',
-              color: 'var(--accent-green)', fontSize: 12,
-            }}>
-              ✓ After registering, sign in with your credentials.
-            </div>
-          )}
-
-          <button
-            className="btn-primary"
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{ marginTop: 6, width: '100%', padding: '12px 0', fontSize: 15 }}
-          >
-            {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
-          </button>
         </div>
-
-        <p style={{
-          textAlign: 'center', marginTop: 22, fontSize: 12,
-          color: 'var(--text-muted)',
-        }}>
-          Track smarter. Spend better.
-        </p>
       </div>
     </div>
   )

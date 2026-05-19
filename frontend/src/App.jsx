@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard'
 import Analytics from './pages/Analytics'
 import { authAPI } from './services/api'
 
-function ProtectedLayout({ user, onLogin, children }) {
+function ProtectedLayout({ user, children }) {
   if (!localStorage.getItem('token')) return <Navigate to="/login" replace />
   return (
     <>
@@ -33,23 +33,20 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      fetchUser()
-    } else {
-      setBootstrapped(true)
-    }
+    if (localStorage.getItem('token')) fetchUser()
+    else setBootstrapped(true)
   }, [])
 
   if (!bootstrapped) {
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'var(--bg-base)',
+        background: 'var(--bg)',
       }}>
         <div style={{
-          width: 36, height: 36, borderRadius: '50%',
-          border: '3px solid var(--bg-card)',
-          borderTop: '3px solid var(--accent-green)',
+          width: 32, height: 32, borderRadius: '50%',
+          border: '3px solid var(--border)',
+          borderTop: '3px solid var(--burgundy)',
           animation: 'spin 0.7s linear infinite',
         }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -60,24 +57,21 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login onLogin={fetchUser} />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedLayout user={user}>
-              <Dashboard />
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedLayout user={user}>
-              <Analytics />
-            </ProtectedLayout>
-          }
-        />
-        <Route path="*" element={<Navigate to={localStorage.getItem('token') ? '/dashboard' : '/login'} replace />} />
+        <Route path="/login"    element={<Login onLogin={fetchUser} mode="login" />} />
+        <Route path="/register" element={<Login onLogin={fetchUser} mode="register" />} />
+        <Route path="/dashboard" element={
+          <ProtectedLayout user={user}>
+            <Dashboard user={user} />
+          </ProtectedLayout>
+        } />
+        <Route path="/analytics" element={
+          <ProtectedLayout user={user}>
+            <Analytics />
+          </ProtectedLayout>
+        } />
+        <Route path="*" element={
+          <Navigate to={localStorage.getItem('token') ? '/dashboard' : '/login'} replace />
+        } />
       </Routes>
     </BrowserRouter>
   )
