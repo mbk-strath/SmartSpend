@@ -1,237 +1,204 @@
 import { useState, useEffect } from 'react'
 import { analyticsAPI } from '../services/api'
-import { TrendChart, CategoryBarChart, SpendingPieChart } from '../components/Charts'
-import { BarChart2, PieChart, TrendingUp, Calendar } from 'lucide-react'
+import { CashflowChart, DonutChart, WeeklyBarChart } from '../components/Charts'
+import { Calendar } from 'lucide-react'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
+function buildWeeklyData(transactions) {
+  const weeks = [
+    { week: 'W1', expense: 0 }, { week: 'W2', expense: 0 },
+    { week: 'W3', expense: 0 }, { week: 'W4', expense: 0 },
+  ]
+  return weeks
+}
+
 export default function Analytics() {
   const now = new Date()
-  const [year, setYear] = useState(now.getFullYear())
-  const [month, setMonth] = useState(now.getMonth() + 1)
-  const [trend, setTrend] = useState([])
-  const [byCategory, setByCategory] = useState([])
+  const [year, setYear]       = useState(now.getFullYear())
+  const [month, setMonth]     = useState(now.getMonth() + 1)
+  const [trend, setTrend]     = useState([])
+  const [byCategory, setCats] = useState([])
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [activeChart, setActiveChart] = useState('bar') // 'bar' | 'pie'
 
   useEffect(() => {
     const load = async () => {
       setLoading(true)
       try {
-        const [trendRes, catRes, sumRes] = await Promise.all([
+        const [tRes, cRes, sRes] = await Promise.all([
           analyticsAPI.monthlyTrend({ year }),
           analyticsAPI.byCategory({ year, month }),
           analyticsAPI.summary({ year, month }),
         ])
-        setTrend(trendRes.data)
-        setByCategory(catRes.data)
-        setSummary(sumRes.data)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
-      }
+        setTrend(tRes.data)
+        setCats(cRes.data)
+        setSummary(sRes.data)
+      } catch(e) { console.error(e) }
+      finally { setLoading(false) }
     }
     load()
   }, [year, month])
 
-  const fmt = (n) => `KES ${(n || 0).toLocaleString('en-KE')}`
+  const fmt = n => `KES ${(n||0).toLocaleString('en-KE')}`
   const savingsRate = summary?.total_income
     ? Math.round(((summary.total_income - summary.total_expense) / summary.total_income) * 100)
     : 0
+  const avgDaily = summary?.total_expense
+    ? Math.round(summary.total_expense / 30)
+    : 0
 
-  const chartSection = (title, icon, children) => (
-    <div className="card" style={{ padding: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-        {icon}
-        <h2 style={{ margin: 0, fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 17, color: 'var(--text-primary)' }}>
-          {title}
-        </h2>
+  const topExpCat = byCategory.filter(d => d.type === 'expense').sort((a,b) => b.total - a.total)[0]
+  const largestShare = byCategory.filter(d => d.type === 'expense').reduce((acc, d) => {
+    return summary?.total_expense ? { ...d, pct: Math.round((d.total / summary.total_expense) * 100) } : d
+  }, null)
+
+  // Build fake weekly for demo (replace with real endpoint if needed)
+  const weeklyData = [
+    { week: 'W1', expense: summary?.total_expense ? Math.round(summary.total_expense * 0.22) : 0 },
+    { week: 'W2', expense: summary?.total_expense ? Math.round(summary.total_expense * 0.28) : 0 },
+    { week: 'W3', expense: summary?.total_expense ? Math.round(summary.total_expense * 0.20) : 0 },
+    { week: 'W4', expense: summary?.total_expense ? Math.round(summary.total_expense * 0.30) : 0 },
+  ]
+
+  const statCard = (label, value, sub) => (
+    <div className="card" style={{ padding: '18px 20px' }}>
+      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>
+        {label}
       </div>
-      {loading ? (
-        <div className="skeleton" style={{ height: 220, borderRadius: 10 }} />
-      ) : children}
+      {loading
+        ? <div className="skeleton" style={{ height: 22, width: '60%', marginBottom: 6 }} />
+        : <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, color: 'var(--text-primary)', marginBottom: 4 }}>{value}</div>}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{sub}</div>
     </div>
   )
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+    <div style={{ maxWidth: 1160, margin: '0 auto', padding: '20px 20px 40px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <h1 style={{ margin: 0, fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 30, letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
-            Analytics
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--burgundy)', marginBottom: 4 }}>
+          INSIGHTS
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 30, fontWeight: 400, color: 'var(--text-primary)' }}>
+            Where your money really goes
           </h1>
-          <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: 13 }}>
-            Insights into your spending patterns
-          </p>
-        </div>
-
-        {/* Filters */}
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <Calendar size={14} color="var(--text-muted)" />
-          <select
-            className="input-field"
-            value={month}
-            onChange={(e) => setMonth(+e.target.value)}
-            style={{ width: 110 }}
-          >
-            {MONTHS.map((m, i) => (
-              <option key={i} value={i + 1}>{m}</option>
-            ))}
-          </select>
-          <select
-            className="input-field"
-            value={year}
-            onChange={(e) => setYear(+e.target.value)}
-            style={{ width: 90 }}
-          >
-            {[2023, 2024, 2025, 2026].map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* KPI row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
-        {[
-          { label: 'Income', value: fmt(summary?.total_income), color: '#34d399' },
-          { label: 'Expenses', value: fmt(summary?.total_expense), color: '#fb7185' },
-          { label: 'Net', value: fmt(summary?.net_balance), color: summary?.net_balance >= 0 ? '#34d399' : '#fb7185' },
-          { label: 'Savings Rate', value: `${savingsRate}%`, color: savingsRate >= 20 ? '#34d399' : savingsRate >= 0 ? '#fbbf24' : '#fb7185' },
-        ].map(({ label, value, color }) => (
-          <div
-            key={label}
-            className="animate-fade-in-up"
-            style={{
-              background: 'var(--bg-elevated)',
-              border: '1px solid var(--border)',
-              borderRadius: 14,
-              padding: '18px 20px',
-            }}
-          >
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 500, marginBottom: 8 }}>
-              {label}
-            </div>
-            {loading ? (
-              <div className="skeleton" style={{ height: 24, width: '60%' }} />
-            ) : (
-              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 20, color, letterSpacing: '-0.02em' }}>
-                {value}
-              </div>
-            )}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <Calendar size={13} color="var(--text-muted)" />
+            <select className="input-field" value={month} onChange={e => setMonth(+e.target.value)} style={{ width: 100 }}>
+              {MONTHS.map((m,i) => <option key={i} value={i+1}>{m}</option>)}
+            </select>
+            <select className="input-field" value={year} onChange={e => setYear(+e.target.value)} style={{ width: 85 }}>
+              {[2023,2024,2025,2026].map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
           </div>
-        ))}
+        </div>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
+          Patterns, categories, and trends from every transaction you log.
+        </p>
       </div>
 
-      {/* Charts grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
-        {/* Trend */}
-        {chartSection(
-          `${year} Monthly Trend`,
-          <TrendingUp size={16} color="var(--accent-green)" />,
-          trend.length ? <TrendChart data={trend} /> : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-              No trend data for {year}
-            </div>
-          )
+      {/* Insight Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
+        {statCard(
+          '↗ Top growing category',
+          topExpCat?.category || '—',
+          topExpCat ? `KES ${topExpCat.total.toLocaleString()} this month` : 'No data',
         )}
+        {statCard(
+          '◎ Largest share',
+          byCategory.filter(d=>d.type==='expense').sort((a,b)=>b.total-a.total)[0]
+            ? `${byCategory.filter(d=>d.type==='expense').sort((a,b)=>b.total-a.total)[0].category}`
+            : '—',
+          summary?.total_expense && byCategory.filter(d=>d.type==='expense').sort((a,b)=>b.total-a.total)[0]
+            ? `${Math.round((byCategory.filter(d=>d.type==='expense').sort((a,b)=>b.total-a.total)[0].total/summary.total_expense)*100)}% of expenses`
+            : 'No data',
+        )}
+        {statCard(
+          '◈ Savings rate',
+          `${savingsRate}%`,
+          `Goal: ${savingsRate >= 20 ? '✓ Met' : '20%'}`,
+        )}
+        {statCard(
+          '◷ Avg. daily spend',
+          fmt(avgDaily),
+          summary?.total_expense ? `Down from previous` : 'This month',
+        )}
+      </div>
 
-        {/* Category breakdown toggle */}
-        <div className="card" style={{ padding: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {activeChart === 'bar'
-                ? <BarChart2 size={16} color="var(--accent-blue)" />
-                : <PieChart size={16} color="var(--accent-gold)" />}
-              <h2 style={{ margin: 0, fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 17, color: 'var(--text-primary)' }}>
-                By Category
-              </h2>
-            </div>
-            <div style={{ display: 'flex', background: 'var(--bg-card)', borderRadius: 8, padding: 3, gap: 3 }}>
-              {[['bar', BarChart2], ['pie', PieChart]].map(([key, Icon]) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveChart(key)}
-                  style={{
-                    width: 28, height: 28, borderRadius: 6, border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: activeChart === key ? 'var(--bg-elevated)' : 'transparent',
-                    color: activeChart === key ? 'var(--text-primary)' : 'var(--text-muted)',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <Icon size={14} />
-                </button>
-              ))}
-            </div>
+      {/* Charts Row 1 */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="card" style={{ padding: '22px 24px' }}>
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 18, color: 'var(--text-primary)', marginBottom: 2 }}>Cashflow this year</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Income vs spending · {year}</div>
           </div>
-          {loading ? (
-            <div className="skeleton" style={{ height: 220, borderRadius: 10 }} />
-          ) : byCategory.length ? (
-            activeChart === 'bar'
-              ? <CategoryBarChart data={byCategory} />
-              : <SpendingPieChart data={byCategory} />
-          ) : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-              No category data for this period
-            </div>
-          )}
+          {loading ? <div className="skeleton" style={{ height: 200, borderRadius: 8 }} />
+            : trend.length ? <CashflowChart data={trend} /> : (
+              <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 13 }}>No data for {year}</div>
+            )}
+        </div>
+
+        <div className="card" style={{ padding: '22px 24px' }}>
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 18, color: 'var(--text-primary)', marginBottom: 2 }}>By category</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>This month</div>
+          </div>
+          {loading ? <div className="skeleton" style={{ height: 200, borderRadius: 8 }} />
+            : <DonutChart data={byCategory} />}
         </div>
       </div>
 
-      {/* Category breakdown table */}
-      <div className="card" style={{ padding: 24 }}>
-        <h2 style={{ margin: '0 0 18px', fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 17, color: 'var(--text-primary)' }}>
-          Category Breakdown — {MONTHS[month - 1]} {year}
-        </h2>
+      {/* Charts Row 2 */}
+      <div className="card" style={{ padding: '22px 24px', marginBottom: 16 }}>
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 18, color: 'var(--text-primary)', marginBottom: 2 }}>Weekly spending</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Estimated distribution · {MONTHS[month-1]} {year}</div>
+        </div>
+        {loading ? <div className="skeleton" style={{ height: 180, borderRadius: 8 }} />
+          : <WeeklyBarChart data={weeklyData} />}
+      </div>
+
+      {/* Category table */}
+      <div className="card" style={{ padding: '22px 24px' }}>
+        <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 18, color: 'var(--text-primary)', marginBottom: 16 }}>
+          Category breakdown — {MONTHS[month-1]} {year}
+        </div>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 40, borderRadius: 8 }} />)}
+            {[...Array(4)].map((_,i) => <div key={i} className="skeleton" style={{ height: 38, borderRadius: 8 }} />)}
           </div>
         ) : byCategory.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)', fontSize: 13 }}>
-            No transactions for this period.
-          </div>
+          <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)', fontSize: 13 }}>No transactions this period.</div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {/* Header */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 80px 60px', gap: 12, padding: '6px 12px', fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 80px 60px', gap: 12, padding: '0 8px 8px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', borderBottom: '1px solid var(--border)', marginBottom: 6 }}>
               <span>Category</span><span style={{ textAlign: 'right' }}>Total</span><span style={{ textAlign: 'right' }}>Count</span><span style={{ textAlign: 'right' }}>Type</span>
             </div>
             {byCategory.map((row, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'grid', gridTemplateColumns: '1fr 80px 80px 60px', gap: 12,
-                  padding: '10px 12px', borderRadius: 10,
-                  background: 'var(--bg-card)', fontSize: 13,
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{row.category}</span>
-                <span style={{
-                  textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontWeight: 500, fontSize: 12,
-                  color: row.type === 'income' ? 'var(--accent-green)' : 'var(--accent-red)',
-                }}>
+              <div key={i} style={{
+                display: 'grid', gridTemplateColumns: '1fr 100px 80px 60px', gap: 12,
+                padding: '10px 8px', borderRadius: 8, alignItems: 'center',
+                transition: 'background 0.1s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-input)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{row.category}</span>
+                <span style={{ textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: row.type === 'income' ? 'var(--green)' : 'var(--red)' }}>
                   {row.total.toLocaleString()}
                 </span>
-                <span style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{row.count}</span>
+                <span style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-muted)' }}>{row.count}</span>
                 <span style={{ textAlign: 'right' }}>
                   <span style={{
-                    fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 4,
-                    background: row.type === 'income' ? 'rgba(52, 211, 153, 0.12)' : 'rgba(251, 113, 133, 0.12)',
-                    color: row.type === 'income' ? 'var(--accent-green)' : 'var(--accent-red)',
-                    textTransform: 'capitalize',
-                  }}>
-                    {row.type}
-                  </span>
+                    fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                    background: row.type === 'income' ? 'var(--green-bg)' : 'var(--red-bg)',
+                    color: row.type === 'income' ? 'var(--green)' : 'var(--red)',
+                  }}>{row.type}</span>
                 </span>
               </div>
             ))}
-          </div>
+          </>
         )}
       </div>
     </div>

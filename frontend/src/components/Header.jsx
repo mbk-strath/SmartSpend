@@ -1,10 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, BarChart2, LogOut, Wallet } from 'lucide-react'
-
-const NAV = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/analytics', label: 'Analytics', icon: BarChart2 },
-]
+import { LayoutDashboard, BarChart2, LogIn, UserPlus } from 'lucide-react'
 
 export default function Header({ user }) {
   const { pathname } = useLocation()
@@ -15,166 +10,78 @@ export default function Header({ user }) {
     navigate('/login')
   }
 
+  const isActive = (path) => pathname.startsWith(path)
+
   return (
-    <header
-      style={{
-        background: 'var(--bg-surface)',
-        borderBottom: '1px solid var(--border)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          padding: '0 24px',
-          height: 64,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        {/* Logo */}
-        <Link
-          to="/dashboard"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            textDecoration: 'none',
-          }}
-        >
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 10,
-              background: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <Wallet size={18} color="#080a0f" strokeWidth={2.5} />
+    <header style={{
+      background: '#fff',
+      borderBottom: '1px solid var(--border)',
+      position: 'sticky', top: 0, zIndex: 50,
+    }}>
+      <div style={{
+        maxWidth: 1160, margin: '0 auto', padding: '0 20px',
+        height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <Link to="/dashboard" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: 7, background: '#7c1d2e',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <path d="M2 10h20"/>
+            </svg>
           </div>
-          <span
-            style={{
-              fontFamily: 'Syne, sans-serif',
-              fontWeight: 700,
-              fontSize: 18,
-              color: 'var(--text-primary)',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Smart<span style={{ color: 'var(--accent-green)' }}>Spend</span>
-          </span>
+          <div>
+            <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 16, color: 'var(--text-primary)', lineHeight: 1 }}>SmartSpend</div>
+            <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1 }}>For Students</div>
+          </div>
         </Link>
 
-        {/* Nav */}
-        <nav style={{ display: 'flex', gap: 4 }}>
-          {NAV.map(({ to, label, icon: Icon }) => {
-            const active = pathname.startsWith(to)
-            return (
-              <Link
-                key={to}
-                to={to}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '7px 14px',
-                  borderRadius: 9,
-                  textDecoration: 'none',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  fontFamily: 'DM Sans, sans-serif',
-                  background: active ? 'var(--bg-card)' : 'transparent',
-                  color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
-                  border: active ? '1px solid var(--border-hover)' : '1px solid transparent',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <Icon size={15} strokeWidth={active ? 2.5 : 2} />
-                {label}
-              </Link>
-            )
-          })}
-        </nav>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {[
+            { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            { to: '/analytics', label: 'Analytics', icon: BarChart2 },
+          ].map(({ to, label, icon: Icon }) => (
+            <Link key={to} to={to} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 12px', borderRadius: 8, textDecoration: 'none',
+              fontSize: 13, fontWeight: 500,
+              background: isActive(to) ? '#7c1d2e' : 'transparent',
+              color: isActive(to) ? '#fff' : 'var(--text-secondary)',
+              transition: 'all 0.15s',
+            }}>
+              <Icon size={13} />{label}
+            </Link>
+          ))}
 
-        {/* User + Logout */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {user && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '5px 12px 5px 5px',
-                borderRadius: 24,
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
-              }}
-            >
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #34d399, #60a5fa)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  fontFamily: 'Syne, sans-serif',
-                  color: '#080a0f',
-                }}
-              >
+          <div style={{ width: 1, height: 18, background: 'var(--border)', margin: '0 6px' }} />
+
+          {user ? (
+            <>
+              <button onClick={handleLogout} className="btn-ghost"
+                style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <LogIn size={13} /> Sign out
+              </button>
+              <div style={{
+                width: 30, height: 30, borderRadius: '50%', background: '#7c1d2e',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 600, fontSize: 12, color: '#fff', marginLeft: 4,
+              }}>
                 {user.username?.[0]?.toUpperCase()}
               </div>
-              <span
-                style={{
-                  fontSize: 13,
-                  color: 'var(--text-secondary)',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
-                {user.username}
-              </span>
-            </div>
+            </>
+          ) : (
+            <>
+              <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 8, textDecoration: 'none', fontSize: 13, color: 'var(--text-secondary)' }}>
+                <LogIn size={13} /> Sign in
+              </Link>
+              <Link to="/register" style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 8, textDecoration: 'none', fontSize: 13, color: 'var(--text-secondary)' }}>
+                <UserPlus size={13} /> Sign up
+              </Link>
+            </>
           )}
-          <button
-            onClick={handleLogout}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '7px 12px',
-              borderRadius: 9,
-              background: 'transparent',
-              border: '1px solid var(--border)',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              fontSize: 13,
-              fontFamily: 'DM Sans, sans-serif',
-              transition: 'all 0.15s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--accent-red)'
-              e.currentTarget.style.borderColor = 'rgba(251, 113, 133, 0.3)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-muted)'
-              e.currentTarget.style.borderColor = 'var(--border)'
-            }}
-          >
-            <LogOut size={14} />
-            Logout
-          </button>
-        </div>
+        </nav>
       </div>
     </header>
   )
