@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Optional
 from app.models.transaction import TransactionType
 
-
 class TransactionBase(BaseModel):
     title: str
     amount: float
@@ -12,10 +11,8 @@ class TransactionBase(BaseModel):
     description: Optional[str] = None
     date: datetime
 
-
 class TransactionCreate(TransactionBase):
     pass
-
 
 class TransactionUpdate(BaseModel):
     title: Optional[str] = None
@@ -25,11 +22,9 @@ class TransactionUpdate(BaseModel):
     description: Optional[str] = None
     date: Optional[datetime] = None
 
-
 class TransactionResponse(TransactionBase):
     id: int
     user_id: int
     created_at: datetime
-
     class Config:
         from_attributes = True
