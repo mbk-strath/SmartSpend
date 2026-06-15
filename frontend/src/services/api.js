@@ -5,17 +5,15 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Attach token to every request
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
-// Handle 401 globally
 api.interceptors.response.use(
-  (res) => res,
-  (err) => {
+  res => res,
+  err => {
     if (err.response?.status === 401) {
       localStorage.removeItem('token')
       window.location.href = '/login'
@@ -24,27 +22,24 @@ api.interceptors.response.use(
   }
 )
 
-// ─── Auth ──────────────────────────────────────────────────────────────────
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
-  me: () => api.get('/auth/me'),
+  register: d => api.post('/auth/register', d),
+  login:    d => api.post('/auth/login', d),
+  me:       () => api.get('/auth/me'),
 }
 
-// ─── Transactions ──────────────────────────────────────────────────────────
 export const transactionsAPI = {
-  list: (params) => api.get('/transactions/', { params }),
-  create: (data) => api.post('/transactions/', data),
-  update: (id, data) => api.patch(`/transactions/${id}`, data),
-  delete: (id) => api.delete(`/transactions/${id}`),
+  list:   p => api.get('/transactions/', { params: p }),
+  create: d => api.post('/transactions/', d),
+  update: (id, d) => api.patch(`/transactions/${id}`, d),
+  delete: id => api.delete(`/transactions/${id}`),
 }
 
-// ─── Analytics ────────────────────────────────────────────────────────────
 export const analyticsAPI = {
-  summary: (params) => api.get('/analytics/summary', { params }),
-  byCategory: (params) => api.get('/analytics/by-category', { params }),
-  monthlyTrend: (params) => api.get('/analytics/monthly-trend', { params }),
-  recent: (limit) => api.get('/analytics/recent-transactions', { params: { limit } }),
+  summary:      p => api.get('/analytics/summary',      { params: p }),
+  byCategory:   p => api.get('/analytics/by-category',  { params: p }),
+  monthlyTrend: p => api.get('/analytics/monthly-trend', { params: p }),
+  recent:       n => api.get('/analytics/recent-transactions', { params: { limit: n } }),
 }
 
 export default api
