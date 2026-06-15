@@ -3,14 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.api import auth, transactions, analytics
 
-# Create all tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-    title="SmartSpend API",
-    description="Personal Finance Tracker API",
-    version="1.0.0",
-)
+app = FastAPI(title="SmartSpend API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,12 +19,8 @@ app.include_router(auth.router)
 app.include_router(transactions.router)
 app.include_router(analytics.router)
 
-
 @app.get("/")
-def root():
-    return {"message": "SmartSpend API is running", "docs": "/docs"}
-
+def root(): return {"message": "SmartSpend API running", "docs": "/docs"}
 
 @app.get("/health")
-def health():
-    return {"status": "ok"}
+def health(): return {"status": "ok"}
