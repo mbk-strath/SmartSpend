@@ -50,11 +50,11 @@ export default function Login({ onLogin }) {
           <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <WalletOutlinedIcon style={{ fontSize: 17, color: '#fff' }} />
           </div>
-          <span style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, color: '#fff' }}>SmartSpend</span>
+          <span style={{ fontFamily: 'Rubik, sans-serif', fontSize: 20, color: '#fff' }}>SmartSpend</span>
         </div>
 
         <div>
-          <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 42, color: '#fff', lineHeight: 1.12, marginBottom: 18, fontWeight: 400, whiteSpace: 'pre-line' }}>
+          <h1 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 42, color: '#fff', lineHeight: 1.12, marginBottom: 18, fontWeight: 400, whiteSpace: 'pre-line' }}>
             Spend with intention.{'\n'}Save without thinking.
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.62)', fontSize: 16, lineHeight: 1.65, maxWidth: 340 }}>A budgeting companion built for students. Log it once, learn from it forever.</p>
@@ -63,7 +63,7 @@ export default function Login({ onLogin }) {
         <div style={{ display: 'flex', gap: 12 }}>
           {STATS.map(({ value, label }) => (
             <div key={label} style={{ flex: 1, background: 'rgba(255,255,255,0.10)', borderRadius: 14, padding: '16px 18px', backdropFilter: 'blur(4px)' }}>
-              <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 26, color: '#fff', lineHeight: 1 }}>{value}</div>
+              <div style={{ fontFamily: 'Rubik, sans-serif', fontSize: 26, color: '#fff', lineHeight: 1 }}>{value}</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 5 }}>{label}</div>
             </div>
           ))}
@@ -77,7 +77,7 @@ export default function Login({ onLogin }) {
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--burgundy)', marginBottom: 8 }}>
               Welcome back
             </div>
-            <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 36, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 6 }}>
+            <h2 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 36, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 6 }}>
               Sign in
             </h2>
             <p style={{ fontSize: 15, color: 'var(--text-muted)' }}>

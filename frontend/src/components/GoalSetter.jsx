@@ -32,7 +32,7 @@ export default function GoalSetter({ onClose, currentExpense }) {
             <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--burgundy-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <TrackChangesOutlinedIcon style={{ fontSize: 18, color: 'var(--burgundy)' }} />
             </div>
-            <h3 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, fontWeight: 400 }}>Set savings goal</h3>
+            <h3 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 20, fontWeight: 400 }}>Set savings goal</h3>
           </div>
           <button onClick={onClose} className="btn-ghost" style={{ width: 30, height: 30, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
             <CloseIcon style={{ fontSize: 16 }} />
@@ -62,7 +62,7 @@ export default function GoalSetter({ onClose, currentExpense }) {
           <label style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'block', marginBottom: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Monthly spending limit (KES)
           </label>
-          <input className="input-field" type="number" min="0" placeholder="e.g. 15000" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSave()} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 600 }} />
+          <input className="input-field" type="number" min="0" placeholder="e.g. 15000" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSave()} style={{ fontFamily: 'Rubik, sans-serif', fontSize: 18, fontWeight: 600 }} />
         </div>
 
         <button className="btn-primary" onClick={handleSave} style={{ width: '100%', justifyContent: 'center' }}>

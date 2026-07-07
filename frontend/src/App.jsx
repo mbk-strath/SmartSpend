@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Header from './components/Header'
+import Footer from './components/Footer'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Analytics from './pages/Analytics'
+import Profile from './pages/Profile'
 import { authAPI } from './services/api'
 
 function ProtectedLayout({ user, children }) {
@@ -13,6 +15,7 @@ function ProtectedLayout({ user, children }) {
     <>
       <Header user={user} />
       <main>{children}</main>
+      <Footer />
     </>
   )
 }
@@ -55,6 +58,7 @@ export default function App() {
         <Route path="/register"  element={<Navigate to="/signup" replace />} />
         <Route path="/dashboard" element={<ProtectedLayout user={user}><Dashboard user={user} /></ProtectedLayout>} />
         <Route path="/analytics" element={<ProtectedLayout user={user}><Analytics /></ProtectedLayout>} />
+        <Route path="/profile"   element={<ProtectedLayout user={user}><Profile user={user} onUserChange={setUser} /></ProtectedLayout>} />
         <Route path="*"          element={<Navigate to={localStorage.getItem('token') ? '/dashboard' : '/login'} replace />} />
       </Routes>
     </BrowserRouter>
