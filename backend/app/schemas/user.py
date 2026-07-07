@@ -13,6 +13,13 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class UserUpdate(BaseModel):
+    username: str
+
+class PasswordUpdate(BaseModel):
+    current_password: str
+    new_password: str
+
 class UserResponse(UserBase):
     id: int
     is_active: bool

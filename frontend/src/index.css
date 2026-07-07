@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -31,14 +31,14 @@ html, body, #root { min-height: 100vh; background: var(--bg); }
 
 body {
   color: var(--text-primary);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Rubik', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 15px;
   line-height: 1.55;
 }
 
-h1, h2, h3, h4 { font-family: 'Instrument Serif', serif; font-weight: 400; }
-.mono { font-family: 'JetBrains Mono', monospace; }
+h1, h2, h3, h4 { font-family: 'Rubik', sans-serif; font-weight: 400; }
+.mono { font-family: 'Rubik', sans-serif; }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -56,7 +56,7 @@ h1, h2, h3, h4 { font-family: 'Instrument Serif', serif; font-weight: 400; }
   border: 1.5px solid transparent;
   border-radius: 10px;
   padding: 12px 14px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 15px;
   color: var(--text-primary);
   width: 100%;
@@ -81,7 +81,7 @@ select.input-field {
 .btn-primary {
   background: var(--burgundy);
   color: #fff;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-weight: 600;
   font-size: 15px;
   padding: 12px 22px;
@@ -100,7 +100,7 @@ select.input-field {
 .btn-outline {
   background: transparent;
   color: var(--text-secondary);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 14px;
   font-weight: 500;
   padding: 9px 16px;
@@ -114,7 +114,7 @@ select.input-field {
 .btn-ghost {
   background: transparent;
   color: var(--text-muted);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 14px;
   padding: 7px 12px;
   border-radius: 8px;
@@ -147,4 +147,28 @@ select.input-field {
   background-size: 500px 100%;
   animation: shimmer 1.4s infinite;
   border-radius: 7px;
+}
+
+@media (max-width: 720px) {
+  .profile-page { padding: 24px 18px !important; }
+  .profile-card { padding: 22px !important; }
+  .profile-inline-form,
+  .profile-delete-row {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+  .profile-password-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .profile-row {
+    grid-template-columns: 32px 1fr !important;
+  }
+  .profile-row > div:nth-child(3) {
+    grid-column: 2;
+  }
+  .smart-footer { padding: 24px 22px 30px !important; }
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
 }

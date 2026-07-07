@@ -26,6 +26,9 @@ export const authAPI = {
   register: d => api.post('/auth/register', d),
   login:    d => api.post('/auth/login', d),
   me:       () => api.get('/auth/me'),
+  updateMe: d => api.patch('/auth/me', d),
+  changePassword: d => api.patch('/auth/me/password', d),
+  deleteMe: () => api.delete('/auth/me'),
 }
 
 export const transactionsAPI = {
@@ -39,6 +42,7 @@ export const analyticsAPI = {
   summary:      p => api.get('/analytics/summary',      { params: p }),
   byCategory:   p => api.get('/analytics/by-category',  { params: p }),
   monthlyTrend: p => api.get('/analytics/monthly-trend', { params: p }),
+  weeklySpending: p => api.get('/analytics/weekly-spending', { params: p }),
   recent:       n => api.get('/analytics/recent-transactions', { params: { limit: n } }),
 }
 

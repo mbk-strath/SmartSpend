@@ -19,7 +19,7 @@ export default function Header({ user }) {
             <WalletOutlinedIcon style={{ fontSize: 16, color: '#fff' }} />
           </div>
           <div>
-            <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 17, color: 'var(--text-primary)', lineHeight: 1.1 }}>SmartSpend</div>
+            <div style={{ fontFamily: 'Rubik, sans-serif', fontSize: 17, color: 'var(--text-primary)', lineHeight: 1.1 }}>SmartSpend</div>
             <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1 }}>For Students</div>
           </div>
         </Link>
@@ -41,9 +41,15 @@ export default function Header({ user }) {
               <button onClick={() => { localStorage.removeItem('token'); navigate('/login') }} className="btn-ghost" style={{ fontSize: 13, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
                 <LoginOutlinedIcon style={{ fontSize: 15 }} /> Sign out
               </button>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#7c1d2e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#fff', marginLeft: 4, flexShrink: 0 }}>
+              <button
+                type="button"
+                aria-label="Open profile"
+                title="Profile"
+                onClick={() => navigate('/profile')}
+                style={{ width: 32, height: 32, borderRadius: '50%', border: pathname.startsWith('/profile') ? '2px solid var(--burgundy-light)' : 'none', background: '#7c1d2e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#fff', marginLeft: 4, flexShrink: 0, cursor: 'pointer', boxShadow: pathname.startsWith('/profile') ? '0 0 0 3px var(--burgundy-muted)' : 'none' }}
+              >
                 {user.username?.[0]?.toUpperCase()}
-              </div>
+              </button>
             </>
           ) : (
             <>

@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { transactionsAPI } from '../services/api'
 
 const CATEGORIES = {
-  income:  ['Salary', 'Freelance', 'Business', 'Investments', 'Gift', 'Other'],
+  income:  ['Salary', 'Freelance', 'Business', 'Investments', 'Gift', 'Allowance', 'Pocket money', 'Other'],
   expense: ['Food and Dining', 'Transport', 'Housing', 'Entertainment', 'Healthcare', 'Shopping', 'Utilities', 'Education', 'Books', 'Other'],
 }
 
@@ -38,7 +38,7 @@ export default function TransactionForm({ onSuccess, onClose, editData }) {
       <div className="anim-up" style={{ background: '#fff', borderRadius: 18, width: '100%', maxWidth: 440, maxHeight: 'calc(100dvh - 32px)', overflowY: 'auto', overscrollBehavior: 'contain', padding: 28, boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border)' }}>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 22, fontWeight: 400 }}>
+          <h2 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 22, fontWeight: 400 }}>
             {editData ? 'Edit transaction' : 'New transaction'}
           </h2>
           <button onClick={onClose} className="btn-ghost" style={{ width: 30, height: 30, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
@@ -62,7 +62,7 @@ export default function TransactionForm({ onSuccess, onClose, editData }) {
             <div key={key}>
               <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</label>
               <input className="input-field" type={type} placeholder={placeholder} value={form[key]} onChange={e => set(key, e.target.value)}
-                style={mono ? { fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 600 } : {}} />
+                style={mono ? { fontFamily: 'Rubik, sans-serif', fontSize: 18, fontWeight: 600 } : {}} />
             </div>
           ))}
 

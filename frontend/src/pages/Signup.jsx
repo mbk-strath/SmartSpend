@@ -58,10 +58,10 @@ export default function Signup() {
           <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <WalletOutlinedIcon style={{ fontSize: 17, color: '#fff' }} />
           </div>
-          <span style={{ fontFamily: 'Instrument Serif, serif', fontSize: 20, color: '#fff' }}>SmartSpend</span>
+          <span style={{ fontFamily: 'Rubik, sans-serif', fontSize: 20, color: '#fff' }}>SmartSpend</span>
         </div>
         <div>
-          <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 42, color: '#fff', lineHeight: 1.12, marginBottom: 18, fontWeight: 400, whiteSpace: 'pre-line' }}>
+          <h1 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 42, color: '#fff', lineHeight: 1.12, marginBottom: 18, fontWeight: 400, whiteSpace: 'pre-line' }}>
             Start your money{'\n'}journey today.
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.62)', fontSize: 16, lineHeight: 1.65, maxWidth: 340 }}>Create an account and start building smarter spending habits.</p>
@@ -69,7 +69,7 @@ export default function Signup() {
         <div style={{ display: 'flex', gap: 12 }}>
           {STATS.map(({ value, label }) => (
             <div key={label} style={{ flex: 1, background: 'rgba(255,255,255,0.10)', borderRadius: 14, padding: '16px 18px', backdropFilter: 'blur(4px)' }}>
-              <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 26, color: '#fff', lineHeight: 1 }}>{value}</div>
+              <div style={{ fontFamily: 'Rubik, sans-serif', fontSize: 26, color: '#fff', lineHeight: 1 }}>{value}</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 5 }}>{label}</div>
             </div>
           ))}
@@ -80,7 +80,7 @@ export default function Signup() {
         <div style={{ width: '100%', maxWidth: 400 }} className="anim-up">
           <div style={{ marginBottom: 28 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--burgundy)', marginBottom: 8 }}>Get started</div>
-            <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 36, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 6 }}>Create account</h2>
+            <h2 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 36, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 6 }}>Create account</h2>
             <p style={{ fontSize: 15, color: 'var(--text-muted)' }}>Fill in your details to set up your free account.</p>
           </div>
 
@@ -89,7 +89,7 @@ export default function Signup() {
               <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 7 }}>Username</label>
               <div style={{ position: 'relative' }}>
                 <PersonOutlinedIcon style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 18 }} />
-                <input className="input-field" required placeholder="Jules Smith" value={form.username} onChange={e => set('username', e.target.value)} style={{ paddingLeft: 38 }} />
+                <input className="input-field" required placeholder="Student name" value={form.username} onChange={e => set('username', e.target.value)} style={{ paddingLeft: 38 }} />
               </div>
             </div>
             <div>

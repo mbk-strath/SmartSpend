@@ -22,7 +22,7 @@ export default function SummaryCard({ label, value, Icon, color, subtitle, loadi
       </div>
       {loading
         ? <div className="skeleton" style={{ height: 26, width: '65%', marginBottom: 6 }} />
-        : <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 22, color: c.accent, marginBottom: 4 }}>{value}</div>}
+        : <div style={{ fontFamily: 'Rubik, sans-serif', fontSize: 22, color: c.accent, marginBottom: 4 }}>{value}</div>}
       {subtitle && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{subtitle}</div>}
     </div>
   )

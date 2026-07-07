@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AddIcon from '@mui/icons-material/Add'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -24,7 +25,7 @@ import GoalSetter, { GoalBanner, loadGoals } from '../components/GoalSetter'
 import { CashflowChart } from '../components/Charts'
 
 const CATS_EXPENSE = ['Food and Dining', 'Transport', 'Rent', 'Books', 'Health', 'Fun', 'Utilities', 'Other']
-const CATS_INCOME  = ['Salary', 'Freelance', 'Business', 'Investments', 'Gift', 'Other']
+const CATS_INCOME  = ['Salary', 'Freelance', 'Business', 'Investments', 'Gift', 'Allowance', 'Pocket money', 'Other']
 
 const CAT_ICON = {
   'Food and Dining': RestaurantOutlinedIcon,
@@ -53,6 +54,7 @@ const Spinner = () => (
 )
 
 export default function Dashboard({ user }) {
+  const navigate = useNavigate()
   const [summary, setSummary]     = useState(null)
   const [transactions, setTxs]    = useState([])
   const [trend, setTrend]         = useState([])
@@ -123,7 +125,7 @@ export default function Dashboard({ user }) {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 10 }}>
           WELCOME BACK, {(user?.username || 'there').toUpperCase()}
         </div>
-        <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 44, color: '#fff', lineHeight: 1.1, marginBottom: 12, fontWeight: 400, maxWidth: 580 }}>
+        <h1 style={{ fontFamily: 'Rubik, sans-serif', fontSize: 44, color: '#fff', lineHeight: 1.1, marginBottom: 12, fontWeight: 400, maxWidth: 580 }}>
           {msg.includes('on track') ? <>You are <span style={{ borderBottom: '2.5px solid rgba(255,255,255,0.7)' }}>on track</span> this month.</> : msg}
         </h1>
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.68)', marginBottom: 24, maxWidth: 480, lineHeight: 1.65 }}>{sub}</p>
@@ -152,7 +154,7 @@ export default function Dashboard({ user }) {
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>{label}</div>
               {loading
                 ? <div className="skeleton" style={{ height: 30, width: '55%', marginBottom: 6 }} />
-                : <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 28, color: 'var(--text-primary)', lineHeight: 1, marginBottom: 5 }}>{value}</div>}
+                : <div style={{ fontFamily: 'Rubik, sans-serif', fontSize: 28, color: 'var(--text-primary)', lineHeight: 1, marginBottom: 5 }}>{value}</div>}
               <div style={{ fontSize: 12, fontWeight: 600, color: ok ? 'var(--green)' : 'var(--text-muted)' }}>{s}</div>
             </div>
           ))}
@@ -180,7 +182,7 @@ export default function Dashboard({ user }) {
 
             <div style={{ marginBottom: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Amount (KES)</div>
-              <input className="input-field" type="number" placeholder="0.00" value={qAmount} onChange={e => setQAmount(e.target.value)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 700 }} />
+              <input className="input-field" type="number" placeholder="0.00" value={qAmount} onChange={e => setQAmount(e.target.value)} style={{ fontFamily: 'Rubik, sans-serif', fontSize: 20, fontWeight: 700 }} />
             </div>
 
             <div style={{ marginBottom: 14 }}>
@@ -214,7 +216,7 @@ export default function Dashboard({ user }) {
                 <h2 style={{ fontSize: 22, marginBottom: 3 }}>Recent transactions</h2>
                 <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Your latest activity</p>
               </div>
-              <button onClick={() => setShowForm(true)} style={{ fontSize: 13, fontWeight: 600, color: 'var(--burgundy)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <button onClick={() => navigate('/analytics#category-breakdown')} style={{ fontSize: 13, fontWeight: 600, color: 'var(--burgundy)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
                 View all <ChevronRightIcon style={{ fontSize: 16 }} />
               </button>
             </div>
@@ -240,7 +242,7 @@ export default function Dashboard({ user }) {
                         <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tx.title}</div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{tx.category} · {format(new Date(tx.date), 'dd MMM')}</div>
                       </div>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: tx.type === 'income' ? 'var(--green)' : 'var(--red)', flexShrink: 0 }}>
+                      <div style={{ fontFamily: 'Rubik, sans-serif', fontSize: 14, fontWeight: 700, color: tx.type === 'income' ? 'var(--green)' : 'var(--red)', flexShrink: 0 }}>
                         {tx.type === 'income' ? '+' : ''}KES {tx.amount.toLocaleString()}
                       </div>
                       <div style={{ display: 'flex', gap: 3, flexShrink: 0 }}>

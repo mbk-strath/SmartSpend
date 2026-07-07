@@ -1,3 +1,5 @@
+from calendar import monthrange
+from datetime import datetime
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract, desc
@@ -18,6 +20,41 @@ def get_summary(year: Optional[int] = None, month: Optional[int] = None, db: Ses
     income  = sum(t.amount for t in txs if t.type == TransactionType.income)
     expense = sum(t.amount for t in txs if t.type == TransactionType.expense)
     return {"total_income": round(income, 2), "total_expense": round(expense, 2), "net_balance": round(income - expense, 2), "transaction_count": len(txs)}
+
+@router.get("/weekly-spending")
+def get_weekly_spending(year: Optional[int] = None, month: Optional[int] = None, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    now = datetime.now()
+    selected_year = year or now.year
+    selected_month = month or now.month
+    days_in_month = monthrange(selected_year, selected_month)[1]
+    week_count = ((days_in_month - 1) // 7) + 1
+    weeks = {
+        week: {
+            "week": f"W{week}",
+            "expense": 0,
+        }
+        for week in range(1, week_count + 1)
+    }
+
+    txs = (
+        db.query(Transaction)
+        .filter(
+            Transaction.user_id == current_user.id,
+            Transaction.type == TransactionType.expense,
+            extract("year", Transaction.date) == selected_year,
+            extract("month", Transaction.date) == selected_month,
+        )
+        .all()
+    )
+
+    for tx in txs:
+        week = ((tx.date.day - 1) // 7) + 1
+        weeks[week]["expense"] += tx.amount
+
+    return [
+        {"week": row["week"], "expense": round(row["expense"], 2)}
+        for row in weeks.values()
+    ]
 
 @router.get("/by-category")
 def get_by_category(type: Optional[TransactionType] = None, year: Optional[int] = None, month: Optional[int] = None, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
